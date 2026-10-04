@@ -41,9 +41,7 @@
 
   ::selection{ background: var(--accent); color: #000; }
 
-  /* ============================================
-     FILM GRAIN GLOBAL — sensación cinematográfica
-     ============================================ */
+  /* Film grain */
   body::after{
     content:"";
     position: fixed;
@@ -64,15 +62,13 @@
     83%{ transform: translate(-1%,-3%); }
   }
 
-  /* ============================================
-     ESCALADO GLOBAL POR RESOLUCIÓN
-     ============================================ */
+  /* Escalado global por resolución */
   @media(min-width: 1920px){ html{ font-size: 17px; } }
   @media(min-width: 2400px){ html{ font-size: 18.5px; } }
   @media(min-width: 3000px){ html{ font-size: 20px; } }
   @media(min-width: 3600px){ html{ font-size: 22px; } }
 
-  /* ---------- LAYOUT ---------- */
+  /* Layout */
   .container{
     width: 100%;
     max-width: 1240px;
@@ -87,7 +83,7 @@
   @media(min-width: 2600px){ .container{ max-width: 2100px; padding: 0 96px; } }
   @media(min-width: 3400px){ .container{ max-width: 2600px; padding: 0 120px; } }
 
-  /* ---------- NAV ---------- */
+  /* Nav */
   nav{
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -179,83 +175,185 @@
   .nav-contact:hover svg{ transform: translateX(3px); }
 
   /* ============================================
-     HERO — imagen local + Ken Burns cinematográfico
+     HERO — imagen responsiva
      ============================================ */
   .hero{
     position: relative;
-    min-height: 100svh;
+    isolation: isolate;
+    /* Fallback progresivo de altura de viewport */
     min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
     display:flex;
     align-items:flex-end;
     overflow:hidden;
     padding: 120px 0 90px;
-  }
-  @media(min-width: 640px){ .hero{ padding: 140px 0 110px; } }
-  @media(min-width: 1200px){ .hero{ padding: 160px 0 130px; } }
-  @media(min-width: 2000px){ .hero{ padding: 180px 0 150px; } }
 
-  /* Capa de fondo con Ken Burns */
-  .hero-bg{
-    position: absolute;
-    inset: -6%;
-    z-index: -4;
     background-color: #050507;
     background-image:
       radial-gradient(ellipse at 25% 30%, rgba(90,162,255,0.18), transparent 55%),
       radial-gradient(ellipse at 78% 72%, rgba(120,80,255,0.12), transparent 50%),
       radial-gradient(ellipse at 50% 100%, rgba(90,162,255,0.08), transparent 60%),
       linear-gradient(160deg, #060608 0%, #0d0d14 45%, #060608 100%);
-    animation: kenBurns 28s cubic-bezier(.45,.05,.55,.95) infinite alternate;
-    will-change: transform;
-    transform-origin: center 40%;
   }
+  @media(min-width: 640px){ .hero{ padding: 140px 0 110px; } }
+  @media(min-width: 1200px){ .hero{ padding: 160px 0 130px; } }
+  @media(min-width: 2000px){ .hero{ padding: 180px 0 150px; } }
 
-  /* Imagen local cargada como <img> real (mejor performance y lazy) */
+  /* Imagen de fondo — responsiva con variables CSS */
   .hero-bg-img{
     position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: -3%;
+    left: -3%;
+    width: 106%;
+    height: 106%;
     object-fit: cover;
-    object-position: center;
+    object-position: center 40%;
+    z-index: -3;
     opacity: 0;
-    transition: opacity 1.6s ease;
+    transition: opacity 1.4s ease;
+
+    /* Variables para Ken Burns adaptativo */
+    --kb-start: 1;
+    --kb-end: 1.10;
+    --kb-x: -1.2%;
+    --kb-y: -0.8%;
+
+    animation: kenBurns 32s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+    will-change: transform, opacity;
     pointer-events: none;
   }
   .hero-bg-img.loaded{ opacity: 1; }
 
   @keyframes kenBurns{
-    0%   { transform: scale(1) translate3d(0,0,0); }
-    100% { transform: scale(1.14) translate3d(-1.8%,-1.2%,0); }
+    0%   { transform: scale(var(--kb-start)) translate3d(0,0,0); }
+    100% { transform: scale(var(--kb-end)) translate3d(var(--kb-x), var(--kb-y), 0); }
   }
 
-  /* Overlay cinematográfico multicapa */
+  /* -------- MOBILE CHICO (< 480px) --------
+     La imagen se recorta mucho horizontalmente.
+     Enfocamos más arriba y reducimos el zoom. */
+  @media(max-width: 479px){
+    .hero-bg-img{
+      top: -2%;
+      left: -2%;
+      width: 104%;
+      height: 104%;
+      object-position: center 30%;
+      --kb-end: 1.05;
+      --kb-x: -0.6%;
+      --kb-y: -0.5%;
+    }
+  }
+
+  /* -------- MOBILE GRANDE (480–767px) -------- */
+  @media(min-width: 480px) and (max-width: 767px){
+    .hero-bg-img{
+      object-position: center 35%;
+      --kb-end: 1.06;
+    }
+  }
+
+  /* -------- TABLET (768–1023px) -------- */
+  @media(min-width: 768px) and (max-width: 1023px){
+    .hero-bg-img{
+      object-position: center 42%;
+      --kb-end: 1.08;
+    }
+  }
+
+  /* -------- DESKTOP (1024–1999px) -------- */
+  @media(min-width: 1024px){
+    .hero-bg-img{
+      top: -4%;
+      left: -4%;
+      width: 108%;
+      height: 108%;
+      object-position: center 45%;
+      --kb-end: 1.12;
+    }
+  }
+
+  /* -------- PANTALLAS ULTRA-WIDE 2K+ --------
+     La imagen respira más, se puede recortar más. */
+  @media(min-width: 2000px){
+    .hero-bg-img{
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110%;
+      --kb-end: 1.14;
+      --kb-x: -1.6%;
+      --kb-y: -1%;
+    }
+  }
+
+  /* -------- 4K -------- */
+  @media(min-width: 3000px){
+    .hero-bg-img{
+      top: -6%;
+      left: -6%;
+      width: 112%;
+      height: 112%;
+      --kb-end: 1.16;
+    }
+  }
+
+  /* Orientación horizontal en mobile — más ancho que alto */
+  @media(max-width: 900px) and (orientation: landscape){
+    .hero{
+      min-height: 100dvh;
+      padding: 100px 0 60px;
+    }
+    .hero-bg-img{
+      object-position: center 50%;
+      --kb-end: 1.06;
+    }
+  }
+
+  /* Overlay cinematográfico */
   .hero-overlay{
-    position:absolute;
-    inset:0;
-    z-index:-3;
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
     background:
       linear-gradient(180deg, rgba(11,11,12,0.55) 0%, rgba(11,11,12,0.2) 30%, rgba(11,11,12,0.55) 70%, rgba(11,11,12,0.96) 100%);
   }
-  /* Vignette lateral para look film */
+
+  /* En mobile el texto ocupa más espacio, oscurecer más abajo */
+  @media(max-width: 640px){
+    .hero-overlay{
+      background:
+        linear-gradient(180deg, rgba(11,11,12,0.5) 0%, rgba(11,11,12,0.15) 25%, rgba(11,11,12,0.6) 55%, rgba(11,11,12,0.98) 100%);
+    }
+  }
+
+  /* Vignette */
   .hero-vignette{
-    position:absolute;
-    inset:0;
-    z-index:-2;
-    pointer-events:none;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
     background:
       radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 100%);
   }
-
-  .hero-content{
-    position: relative;
-    z-index: 2;
-    max-width: 900px;
+  @media(max-width: 640px){
+    .hero-vignette{
+      background:
+        radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.6) 100%);
+    }
   }
+
+  .hero .container{
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-content{ max-width: 900px; }
   @media(min-width: 2000px){ .hero-content{ max-width: 1100px; } }
   @media(min-width: 2600px){ .hero-content{ max-width: 1300px; } }
 
-  /* Eyebrow con línea decorativa animada */
   .hero-eyebrow{
     display: inline-flex;
     align-items: center;
@@ -281,11 +379,8 @@
     transform-origin: left;
     animation: lineGrow 1.1s .5s cubic-bezier(.6,.05,.3,1) forwards;
   }
-  @keyframes lineGrow{
-    to { transform: scaleX(1); }
-  }
+  @keyframes lineGrow{ to { transform: scaleX(1); } }
 
-  /* H1 con reveal por línea (máscara) */
   .hero h1{
     font-size: clamp(2.1rem, 6vw, 4.4rem);
     line-height: 1.05;
@@ -312,9 +407,7 @@
   .hero h1 .line:nth-child(1) > span{ animation-delay: .55s; }
   .hero h1 .line:nth-child(2) > span{ animation-delay: .72s; }
 
-  @keyframes lineReveal{
-    to { transform: translateY(0); }
-  }
+  @keyframes lineReveal{ to { transform: translateY(0); } }
 
   .hero h1 em{
     font-style: normal;
@@ -344,7 +437,6 @@
   }
   @media(min-width: 640px){ .hero-actions{ gap: 12px; } }
 
-  /* Indicador de scroll cinematográfico */
   .hero-scroll{
     position: absolute;
     bottom: 30px;
@@ -389,16 +481,31 @@
     100% { transform: translateY(260%); opacity: 0; }
   }
 
-  @keyframes fadeIn{
-    from{ opacity:0; }
-    to{ opacity:1; }
-  }
+  @keyframes fadeIn{ from{ opacity:0; } to{ opacity:1; } }
   @keyframes fadeUp{
     from{ opacity:0; transform: translateY(24px); }
     to{ opacity:1; transform: translateY(0); }
   }
 
-  /* ---------- BUTTONS ---------- */
+  .hero-img-warning{
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    background: rgba(255,184,77,0.1);
+    border: 1px solid rgba(255,184,77,0.3);
+    color: #ffb84d;
+    padding: 8px 16px;
+    border-radius: 2px;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    display: none;
+  }
+  html[data-hero="error"] .hero-img-warning{ display: block; }
+  @media(max-width: 640px){ .hero-img-warning{ font-size: 0.68rem; padding: 7px 12px; bottom: 12px; } }
+
+  /* Botones */
   .btn{
     display: inline-flex;
     align-items: center;
@@ -432,10 +539,7 @@
   }
   .btn:hover::before{ left: 130%; }
 
-  .btn-primary{
-    background: #fff;
-    color: #0b0b0c;
-  }
+  .btn-primary{ background: #fff; color: #0b0b0c; }
   .btn-primary:hover{
     background: #d9d9d9;
     transform: translateY(-2px);
@@ -472,10 +576,8 @@
   }
   @media(min-width: 640px){ .btn-instagram svg{ width: 18px; height: 18px; } }
 
-  /* ---------- SECTIONS ---------- */
-  section{
-    padding: 80px 0;
-  }
+  /* Secciones */
+  section{ padding: 80px 0; }
   @media(min-width: 640px){ section{ padding: 110px 0; } }
   @media(min-width: 900px){ section{ padding: 130px 0; } }
   @media(min-width: 1200px){ section{ padding: 140px 0; } }
@@ -483,10 +585,7 @@
   @media(min-width: 2600px){ section{ padding: 220px 0; } }
   @media(min-width: 3400px){ section{ padding: 260px 0; } }
 
-  .section-head{
-    max-width: 720px;
-    margin-bottom: 48px;
-  }
+  .section-head{ max-width: 720px; margin-bottom: 48px; }
   @media(min-width: 640px){ .section-head{ margin-bottom: 64px; } }
   @media(min-width: 2000px){ .section-head{ max-width: 900px; margin-bottom: 80px; } }
 
@@ -523,7 +622,7 @@
   }
   @media(min-width: 640px){ .eyebrow{ font-size: 0.72rem; margin-bottom: 22px; } }
 
-  /* ---------- PORTFOLIO ---------- */
+  /* Portfolio */
   .portfolio{
     background: var(--bg);
     border-top: 1px solid var(--line);
@@ -593,14 +692,12 @@
     transform: scale(1.05);
     filter: brightness(1.16);
   }
-  .p-item:hover .p-placeholder::before{
-    opacity: 1;
-  }
+  .p-item:hover .p-placeholder::before{ opacity: 1; }
 
   .p-item.tall{ grid-row: span 2; }
   .p-item.wide{ grid-column: span 2; }
 
-  /* ---------- SERVICES ---------- */
+  /* Services */
   .services{
     background: var(--bg-elev);
     border-top: 1px solid var(--line);
@@ -637,9 +734,7 @@
   @media(min-width: 640px){ .service{ padding: 32px 0; grid-template-columns: 52px 1fr; gap: 20px; } }
   @media(min-width: 2000px){ .service{ padding: 42px 0; gap: 28px; } }
 
-  .service:last-child{
-    border-bottom: 1px solid var(--line);
-  }
+  .service:last-child{ border-bottom: 1px solid var(--line); }
   .service-num{
     font-size: 0.7rem;
     color: var(--muted-2);
@@ -695,7 +790,7 @@
     .service-num{ padding-top: 0; }
   }
 
-  /* ---------- FINAL CTA ---------- */
+  /* Final CTA */
   .final-cta{
     background: var(--bg-elev);
     border-top: 1px solid var(--line);
@@ -742,7 +837,7 @@
   @media(min-width: 640px){ .final-cta p{ font-size: 1rem; margin-bottom: 40px; } }
   @media(min-width: 2000px){ .final-cta p{ font-size: 1.15rem; max-width: 600px; } }
 
-  /* ---------- FOOTER ---------- */
+  /* Footer */
   footer{
     border-top: 1px solid var(--line);
     padding: 32px 0;
@@ -753,9 +848,7 @@
   @media(min-width: 640px){ footer{ padding: 36px 0; font-size: 0.8rem; } }
   @media(min-width: 2000px){ footer{ padding: 44px 0; font-size: 0.88rem; } }
 
-  /* ============================================
-     ANIMACIONES DE SCROLL — reveal cinematográfico
-     ============================================ */
+  /* Reveal */
   .reveal{
     opacity: 0;
     transform: translateY(32px);
@@ -764,10 +857,7 @@
       transform 1s cubic-bezier(.19,1,.22,1);
     will-change: opacity, transform;
   }
-  .reveal.visible{
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .reveal.visible{ opacity: 1; transform: translateY(0); }
 
   .reveal-delay-1{ transition-delay: .09s; }
   .reveal-delay-2{ transition-delay: .18s; }
@@ -782,7 +872,7 @@
     .reveal{ opacity:1; transform:none; }
     .hero h1 .line > span{ transform:none; animation:none; }
     .hero-eyebrow, .hero .sub, .hero-actions, .hero-scroll{ opacity:1; animation:none; }
-    .hero-bg{ animation:none; }
+    .hero-bg-img{ animation:none; }
     body::after{ display:none; }
   }
 </style>
@@ -806,11 +896,8 @@
 
 <!-- HERO -->
 <header class="hero">
-  <!-- Capa de fondo con Ken Burns + imagen local -->
-  <div class="hero-bg" aria-hidden="true">
-    <!-- Imagen local: mismo directorio que index.html -->
-    <img class="hero-bg-img" id="heroImg" src="fondo.jpeg" alt="" fetchpriority="high" decoding="async">
-  </div>
+  <img class="hero-bg-img" id="heroImg" src="fondo.jpg" alt="" fetchpriority="high" decoding="async">
+
   <div class="hero-overlay"></div>
   <div class="hero-vignette"></div>
 
@@ -834,11 +921,12 @@
     </div>
   </div>
 
-  <!-- Indicador de scroll -->
   <div class="hero-scroll" aria-hidden="true">
     <span>Scroll</span>
     <div class="scroll-line"></div>
   </div>
+
+  <div class="hero-img-warning">⚠ No se encontró "fondo.jpg" en la carpeta</div>
 </header>
 
 <!-- PORTFOLIO -->
@@ -851,30 +939,14 @@
     </div>
 
     <div class="portfolio-grid">
-      <div class="p-item tall reveal">
-        <div class="p-placeholder">Foto 1</div>
-      </div>
-      <div class="p-item reveal reveal-delay-1">
-        <div class="p-placeholder">Foto 2</div>
-      </div>
-      <div class="p-item reveal reveal-delay-2">
-        <div class="p-placeholder">Foto 3</div>
-      </div>
-      <div class="p-item wide reveal reveal-delay-3">
-        <div class="p-placeholder">Foto 4</div>
-      </div>
-      <div class="p-item reveal">
-        <div class="p-placeholder">Foto 5</div>
-      </div>
-      <div class="p-item tall reveal reveal-delay-1">
-        <div class="p-placeholder">Foto 6</div>
-      </div>
-      <div class="p-item reveal reveal-delay-2">
-        <div class="p-placeholder">Foto 7</div>
-      </div>
-      <div class="p-item reveal reveal-delay-3">
-        <div class="p-placeholder">Foto 8</div>
-      </div>
+      <div class="p-item tall reveal"><div class="p-placeholder">Foto 1</div></div>
+      <div class="p-item reveal reveal-delay-1"><div class="p-placeholder">Foto 2</div></div>
+      <div class="p-item reveal reveal-delay-2"><div class="p-placeholder">Foto 3</div></div>
+      <div class="p-item wide reveal reveal-delay-3"><div class="p-placeholder">Foto 4</div></div>
+      <div class="p-item reveal"><div class="p-placeholder">Foto 5</div></div>
+      <div class="p-item tall reveal reveal-delay-1"><div class="p-placeholder">Foto 6</div></div>
+      <div class="p-item reveal reveal-delay-2"><div class="p-placeholder">Foto 7</div></div>
+      <div class="p-item reveal reveal-delay-3"><div class="p-placeholder">Foto 8</div></div>
     </div>
   </div>
 </section>
@@ -897,7 +969,6 @@
             <p>Presencia completa en bodas, cumpleaños, fiestas y eventos corporativos. Capturamos cada detalle sin interrumpir la experiencia.</p>
           </div>
         </article>
-
         <article class="service reveal reveal-delay-1">
           <span class="service-num">02</span>
           <div>
@@ -905,7 +976,6 @@
             <p>Imágenes editadas con acabado cinematográfico, alto detalle y color grading listo para imprimir o publicar.</p>
           </div>
         </article>
-
         <article class="service reveal reveal-delay-2">
           <span class="service-num">03</span>
           <div>
@@ -913,7 +983,6 @@
             <p>Aftermovie, highlights y video resumen con narrativa cuidada. Movimiento, música y montaje pensados para emocionar.</p>
           </div>
         </article>
-
         <article class="service reveal reveal-delay-3">
           <span class="service-num">04</span>
           <div>
@@ -956,16 +1025,36 @@
   // Año dinámico
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // Fade-in de la imagen del hero cuando carga
+  // ============================================
+  // CARGA ROBUSTA DE LA IMAGEN DEL HERO
+  // ============================================
   const heroImg = document.getElementById('heroImg');
-  if (heroImg.complete && heroImg.naturalWidth > 0) {
+
+  function markLoaded(){
     heroImg.classList.add('loaded');
+    document.documentElement.setAttribute('data-hero', 'loaded');
+    console.log('%c✓ Imagen hero cargada: ' + heroImg.src, 'color:#5aa2ff; font-weight:bold;');
+  }
+
+  function markError(){
+    document.documentElement.setAttribute('data-hero', 'error');
+    console.warn(
+      '%c⚠ NO se pudo cargar la imagen del hero.\n' +
+      '   Verificá:\n' +
+      '   1. Que el archivo se llame EXACTAMENTE "fondo.jpg"\n' +
+      '   2. Que esté en el mismo directorio que este index.html\n' +
+      '   3. Que la extensión sea .jpg\n' +
+      '   Ruta intentada: ' + heroImg.src,
+      'color:#ffb84d; font-weight:bold; line-height:1.6;'
+    );
+  }
+
+  if (heroImg.complete) {
+    if (heroImg.naturalWidth > 0) markLoaded();
+    else markError();
   } else {
-    heroImg.addEventListener('load', () => heroImg.classList.add('loaded'));
-    heroImg.addEventListener('error', () => {
-      // Si la imagen falla, se queda visible el degradado cinematográfico de fondo
-      console.warn('No se encontró "fondo.jpeg" en el directorio. Se muestra el degradado de fondo.');
-    });
+    heroImg.addEventListener('load', markLoaded, { once: true });
+    heroImg.addEventListener('error', markError, { once: true });
   }
 
   // Nav scroll state
@@ -974,7 +1063,7 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  // Reveal on scroll con stagger
+  // Reveal on scroll
   const io = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -986,7 +1075,7 @@
 
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Smooth anchor scroll con offset del nav
+  // Smooth anchor scroll
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const target = document.querySelector(this.getAttribute('href'));
