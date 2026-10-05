@@ -1,16 +1,5 @@
 /* =========================================================
    FELIPE — FOTOGRAFÍA Y VIDEO
-   =========================================================
-   1.  Reset & base
-   2.  Design tokens
-   3.  Tipografía
-   4.  Utilidades
-   5.  Componentes
-   6.  Nav
-   7.  Hero
-   8.  Secciones
-   9.  Footer
-   10. Accesibilidad & motion
    ========================================================= */
 
 /* ---------------------------------------------------------
@@ -57,7 +46,6 @@ ul, ol { list-style: none; }
 
 ::selection { background: var(--accent); color: #000; }
 
-/* Film grain overlay */
 body::after {
   content: "";
   position: fixed;
@@ -118,8 +106,7 @@ h2 {
 
 .section-head p,
 .service__body p,
-.final-cta p,
-.mirada__text p {
+.final-cta p {
   color: var(--muted);
   font-weight: 300;
   line-height: 1.75;
@@ -167,7 +154,6 @@ h2 {
   .eyebrow { font-size: 0.7rem; margin-bottom: 24px; }
 }
 
-/* Reveal on scroll — variantes sutiles */
 .reveal {
   opacity: 0;
   transform: translate3d(0, 26px, 0);
@@ -183,14 +169,6 @@ h2 {
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Variante lateral para "Mi mirada" */
-.mirada__text.reveal {
-  transform: translate3d(24px, 0, 0);
-}
-.mirada__text.reveal.is-visible {
   transform: translate3d(0, 0, 0);
 }
 
@@ -784,34 +762,9 @@ section { padding: 80px 0; }
   .p-item:hover .p-item__ph::before { opacity: 1; }
 }
 
-/* ----- Mi mirada ----- */
-.mirada {
-  background: var(--bg-elev);
-  border-top: 1px solid var(--line);
-}
-
-.mirada__inner {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 32px;
-}
-
-@media (min-width: 900px) {
-  .mirada__inner {
-    grid-template-columns: 1fr 1.4fr;
-    gap: 80px;
-    align-items: start;
-  }
-}
-
-@media (min-width: 1400px) { .mirada__inner { gap: 120px; } }
-
-.mirada__text p { margin-bottom: 18px; max-width: 560px; }
-.mirada__text p:last-child { margin-bottom: 0; }
-
 /* ----- Servicios ----- */
 .services {
-  background: var(--bg);
+  background: var(--bg-elev);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -881,7 +834,6 @@ section { padding: 80px 0; }
   .service:hover .service__num { color: var(--accent); }
 }
 
-/* Grilla 2 columnas en desktop */
 @media (min-width: 700px) {
   .services__list {
     grid-template-columns: 1fr 1fr;
@@ -985,8 +937,7 @@ section { padding: 80px 0; }
 
   html { scroll-behavior: auto; }
 
-  .reveal,
-  .mirada__text.reveal { opacity: 1; transform: none; }
+  .reveal { opacity: 1; transform: none; }
   .hero__line > span { transform: none; animation: none; }
   .hero__eyebrow,
   .hero__subtitle,

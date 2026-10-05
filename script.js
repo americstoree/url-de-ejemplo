@@ -8,15 +8,9 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const supportsIO = 'IntersectionObserver' in window;
 
-  /* -------------------------------------------------------
-     Año dinámico
-     ------------------------------------------------------- */
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  /* -------------------------------------------------------
-     Imagen del hero
-     ------------------------------------------------------- */
   (function initHeroImage() {
     const heroImg = document.getElementById('heroImg');
     if (!heroImg) return;
@@ -43,9 +37,6 @@
     }
   })();
 
-  /* -------------------------------------------------------
-     Nav scrolled (rAF throttle)
-     ------------------------------------------------------- */
   (function initNavScroll() {
     const nav = document.getElementById('nav');
     if (!nav) return;
@@ -73,9 +64,6 @@
     update();
   })();
 
-  /* -------------------------------------------------------
-     Reveals
-     ------------------------------------------------------- */
   (function initReveals() {
     const items = document.querySelectorAll('.reveal');
     if (!items.length) return;
@@ -100,9 +88,6 @@
     items.forEach((el) => io.observe(el));
   })();
 
-  /* -------------------------------------------------------
-     Scroll spy
-     ------------------------------------------------------- */
   (function initScrollSpy() {
     const links = Array.from(document.querySelectorAll('[data-nav]'));
     if (!links.length || !supportsIO) return;
@@ -139,9 +124,6 @@
     sections.forEach((s) => io.observe(s.el));
   })();
 
-  /* -------------------------------------------------------
-     Smooth scroll
-     ------------------------------------------------------- */
   (function initSmoothScroll() {
     const anchors = document.querySelectorAll('a[href^="#"]');
     if (!anchors.length) return;
@@ -185,9 +167,6 @@
     }
   })();
 
-  /* -------------------------------------------------------
-     Detección de touch
-     ------------------------------------------------------- */
   (function initTouchClass() {
     if (window.matchMedia('(hover: none)').matches) {
       document.documentElement.classList.add('is-touch');
